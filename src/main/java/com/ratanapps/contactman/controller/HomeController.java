@@ -7,6 +7,7 @@ import com.ratanapps.contactman.util.UserRole;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +22,8 @@ public class HomeController {
     @Autowired
     UserRepository userRepository;
 
-   /* @Autowired
-    private BCryptPasswordEncoder passwordEncoder;*/
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @RequestMapping("/")
     public String home(Model model) {
@@ -66,16 +67,19 @@ public class HomeController {
             System.out.println("Agreement " + agreement);
             System.out.println("USER " + user.toString());
 
-            user.setRole(UserRole.USER_GENERAL.getValue());
+            user.setRole(UserRole.USER_GENERAL.getDbValue());
             user.setEnabled(true);
             user.setImageUrl("user.png");
-            //user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 
 
             User newUser = this.userRepository.save(user);
             model.addAttribute("user", new User());
             httpSession.setAttribute("message", new Message("Successfully registered !", "alert-success"));
+            User user23 = userRepository.getUserByUserName(user.getEmail());
+            System.out.println("Saved User ***********"+user23);
+
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("user",user);
