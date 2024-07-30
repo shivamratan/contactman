@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                 .requestMatchers(SECURED_URL).authenticated()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin();
+                .formLogin().loginPage("/signin");
 
         httpSecurity.authenticationProvider(authenticationProvider());
 
