@@ -25,10 +25,11 @@ public class HomeController {
     @RequestMapping("/")
     public String home(Model model) {
         model.addAttribute("title", "Home - ContactMan");
+        model.addAttribute("message", "This is public user");
         return "home";
     }
 
-    @RequestMapping("/about")
+    @RequestMapping(value = "/about", method = RequestMethod.GET)
     public String about(Model model) {
         model.addAttribute("title", "About - ContactMan");
         return "about";
@@ -91,6 +92,12 @@ public class HomeController {
     public String customLogin(Model model) {
         model.addAttribute("title", "Login - ContactMan");
         return "login";
+    }
+
+    @GetMapping("/testthyme")
+    public String testThyme(Model model) {
+        model.addAttribute("message", "This is a test message");
+        return "test";
     }
 
 
