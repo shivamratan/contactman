@@ -1,14 +1,21 @@
 package com.ratanapps.contactman.config;
 
 import com.ratanapps.contactman.util.UserRole;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -48,11 +55,51 @@ public class WebSecurityConfig {
                 .requestMatchers(SECURED_URL).authenticated()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin().loginPage("/signin");
+                .formLogin().loginPage("/signin")
+                .loginProcessingUrl("/dologin")
+                .successHandler(customAuthenticationSuccessHandler())
+        ;
 
         httpSecurity.authenticationProvider(authenticationProvider());
 
         return httpSecurity.build();
+    }
+
+
+    @Bean
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(
+                    HttpServletRequest request,
+                    HttpServletResponse response,
+                    Authentication authentication) throws IOException, ServletException {
+
+                String redirectUrl = "/";
+
+                if (authentication
+                        .getAuthorities()
+                        .stream()
+                        .anyMatch(grantedAuthority ->
+                                        grantedAuthority.getAuthority().equals(UserRole.USER_GENERAL.getDbValue())
+                        )
+                ) {
+                    redirectUrl = "/user/index";
+                } else if(authentication
+                        .getAuthorities()
+                        .stream()
+                        .anyMatch(grantedAuthority ->
+                                grantedAuthority.getAuthority().equals(UserRole.USER_ADMIN.getDbValue())
+                        )
+                ) {
+                    redirectUrl = "/admin/index";
+                } else {
+                    redirectUrl = "/";
+                }
+
+                response.sendRedirect(redirectUrl);
+            }
+        };
     }
 
 /*
