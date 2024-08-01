@@ -7,6 +7,9 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
+<!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <title th:text="${title}">Contact Man</title>
   <link rel="stylesheet" th:href="@{/css/user-style.css}" />
 </head>
@@ -43,7 +46,30 @@
 
 <!-- End of Nav bar -->
 
-<div th:replace="${content}"></div>
+
+<!-- Start of Side bar -->
+<div class="sidebar">
+
+  <span class="closeBtn" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></span>
+  <a href="" class="item"><i class="fa-solid fa-house"></i> Home</a>
+  <a href="" class="item"><i class="fa-solid fa-id-card"></i> View Contacts</a>
+  <a href="" class="item"><i class="fa-solid fa-pencil"></i> Add Contact</a>
+  <a href="" class="item"><i class="fa-solid fa-circle-user"></i> Your Profile</a>
+  <a href="" class="item"><i class="fa-solid fa-gear"></i> Settings</a>
+  <a href="" class="item"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  <div class="divider"></div>
+
+</div>
+
+<!-- End of side bar -->
+
+<!-- Start of the content area -->
+<div class="content">
+  <i class="fa-solid fa-bars" onclick="toggleSidebar()"></i>
+  <div th:replace="${content}"></div>
+</div>
+
+<!-- End of the content area -->
 
 <!--<div id="footer">
   <h6>Powered by Ratan Apps &copy; reserved 2024</h6>
