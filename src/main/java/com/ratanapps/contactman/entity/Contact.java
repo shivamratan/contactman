@@ -30,4 +30,8 @@ public class Contact {
 
     @ManyToOne
     private User user;
+
+    public String printObj() {
+        return "name = "+name+" secondName= "+secondName+" work="+work+" email"+email+" phone"+phone+" description"+description ;
+    }
 }
