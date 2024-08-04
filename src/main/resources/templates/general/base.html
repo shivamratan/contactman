@@ -66,6 +66,17 @@
 <!-- Start of the content area -->
 <div class="content">
   <i id="hamburger_icon" class="fa-solid fa-2x fa-bars ml-3 mb-3" onclick="toggleSidebar()"></i>
+
+
+  <div th:if="${session.message}" class="container">
+    <div class="alert text-center" th:classappend="${session.message.type}" role="alert">
+     <span th:text="${session.message.content}"></span>
+    </div>
+
+    <th:block th:text="${@sessionUtilBean.removeMessageFromSession()}"></th:block>
+  </div>
+
+
   <div th:replace="${content}"></div>
 </div>
 

@@ -2,16 +2,22 @@ package com.ratanapps.contactman.controller;
 
 import com.ratanapps.contactman.entity.Contact;
 import com.ratanapps.contactman.entity.User;
+import com.ratanapps.contactman.model.Message;
 import com.ratanapps.contactman.service.ContactService;
 import com.ratanapps.contactman.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 
@@ -53,19 +59,46 @@ public class UserController {
     }
 
     @RequestMapping(value = "/process-contact", method = RequestMethod.POST)
-    public String processContactForm(@ModelAttribute Contact contact, Principal principal) {
+    public String processContactForm(@ModelAttribute Contact contact,
+                                     @RequestParam("profileImage") MultipartFile file,
+                                     Principal principal,
+                                     HttpSession session
+                                     ) {
 
-        String userName = principal.getName();
-        User user = userService.getUserByUserEmail(userName);
+        try {
+            String userName = principal.getName();
+            User user = userService.getUserByUserEmail(userName);
 
-        contact.setUser(user);
-        user.getContacts().add(contact);
-        userService.saveUser(user);
+            // Processing and uploading file..
+            if (file.isEmpty()) {
+                //if the file is empty then try our message
+                System.out.println("File is Empty");
+            } else {
+                // upload the file to the folder and update the name to contact
+                contact.setImage(file.getOriginalFilename());
+                File saveFile = new ClassPathResource("static/img").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-        List<Contact> contactList = contactService.getContactByUser(user);
+            }
 
-        for(Contact c: contactList)
-            System.out.println("Contact Data "+c.printObj());
+
+            contact.setUser(user);
+            user.getContacts().add(contact);
+            userService.saveUser(user);
+
+
+            List<Contact> contactList = contactService.getContactByUser(user);
+            for (Contact c : contactList)
+                System.out.println("Contact Data " + c.printObj());
+
+            session.setAttribute("message", new Message("Your contact successfully added !","alert-success"));
+        } catch (Exception e) {
+            System.out.println("ERROR "+e.getMessage());
+            e.printStackTrace();
+            session.setAttribute("message", new Message("Something went wrong, Try again !!","alert-danger"));
+
+        }
 
         return "general/add_contact_form";
     }
