@@ -8,10 +8,12 @@ import com.ratanapps.contactman.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.ratanapps.contactman.util.ContactManConst;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -104,15 +106,23 @@ public class UserController {
     }
 
 
-    @GetMapping("/show-contacts")
-    public String showContacts(Model model, Principal principal) {
+    // Per page contact n= 10
+    // current page = 0
+    @GetMapping("/show-contacts/{page}")
+    public String showContacts(@PathVariable("page") Integer page, Model model, Principal principal) {
         model.addAttribute("title", "Show Contacts - ContactMan");
 
         String userName = principal.getName();
         User user = userService.getUserByUserEmail(userName);
 
-        List<Contact> contactList = contactService.getContactByUserId(user.getId());
+        Page<Contact> contactList = contactService.getContactByUserId(
+                user.getId(),
+                page,
+                ContactManConst.SHOW_CONTACT_PAGE_ITEM_COUNT);
+
         model.addAttribute("contacts", contactList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPage", contactList.getTotalPages());
 
         return "general/show_contacts";
     }
