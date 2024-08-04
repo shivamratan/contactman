@@ -73,7 +73,7 @@
      <span th:text="${session.message.content}"></span>
     </div>
 
-    <th:block th:text="${@sessionUtilBean.removeMessageFromSession()}"></th:block>
+    <th:block th:text="${@sessionHelperService.removeMessageFromSession()}"></th:block>
   </div>
 
 
