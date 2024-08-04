@@ -18,4 +18,8 @@ public class ContactService {
         return contactRepository.getContactByUser(user);
     }
 
+    public List<Contact> getContactByUserId(Long userId) {
+        return contactRepository.getContactByUserId(userId);
+    }
+
 }

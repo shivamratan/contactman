@@ -104,4 +104,17 @@ public class UserController {
     }
 
 
+    @GetMapping("/show-contacts")
+    public String showContacts(Model model, Principal principal) {
+        model.addAttribute("title", "Show Contacts - ContactMan");
+
+        String userName = principal.getName();
+        User user = userService.getUserByUserEmail(userName);
+
+        List<Contact> contactList = contactService.getContactByUserId(user.getId());
+        model.addAttribute("contacts", contactList);
+
+        return "general/show_contacts";
+    }
+
 }
