@@ -75,6 +75,7 @@ public class UserController {
             if (file.isEmpty()) {
                 //if the file is empty then try our message
                 System.out.println("File is Empty");
+                contact.setImage("contact.png");
             } else {
                 // upload the file to the folder and update the name to contact
                 contact.setImage(file.getOriginalFilename());
