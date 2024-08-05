@@ -131,12 +131,16 @@ public class UserController {
 
     //Show Particular contact details
     @RequestMapping(value = "/contact/{contactid}", method = RequestMethod.GET)
-    public String showContactDetails(@PathVariable("contactid") Long cId, Model model) {
+    public String showContactDetails(@PathVariable("contactid") Long cId, Model model, Principal principal) {
 
         Optional<Contact> contactOptional = contactService.getContactDetailByUserid(cId);
+        User user = userService.getUserByUserEmail(principal.getName());
         if (contactOptional.isPresent()) {
             Contact contact = contactOptional.get();
-            model.addAttribute("contact", contact);
+
+
+            if (user != null && (user.getId() == contact.getUser().getId()))
+                model.addAttribute("contact", contact);
             System.out.println(contact.printObj());
         }
         return "general/contact_detail";
