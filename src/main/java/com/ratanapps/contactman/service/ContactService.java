@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactService {
@@ -25,6 +26,10 @@ public class ContactService {
 
         Pageable pageable = PageRequest.of(curpage, countPerPage);
         return contactRepository.getContactByUserId(userId, pageable);
+    }
+
+    public Optional<Contact> getContactDetailByUserid(Long contactId) {
+        return contactRepository.getContactDetailByUserId(contactId);
     }
 
 }

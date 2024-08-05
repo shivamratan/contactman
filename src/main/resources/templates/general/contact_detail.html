@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org" th:replace="general/base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <title>Show Contacts - ContactMan</title>
+</head>
+<body>
+
+<section>
+
+    <div class="card ml-3 mr-3">
+        <div class="card-body">
+            <div class="container text-center">
+                <img class="my_prof_pic rounded-circle" style="height: 200px; width: 200px;" th:src="@{'/img/'+${contact.image}}" alt="profile photo" />
+                <h3 class="mt-3"> <span th:text="${contact.name}"></span><span th:text=" '('+${contact.secondName}+')'"></span></h3>
+
+                <table class="table mt-5">
+                    <tbody>
+                    <tr>
+                        <th scope="row">Id</th>
+                        <td><span th:text="${contact.cId}"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Name</th>
+                        <td><span th:text="${contact.name}"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Second name</th>
+                        <td><span th:text="${contact.secondName}"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Email</th>
+                        <td><span th:text="${contact.email}"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Phone number</th>
+                        <td><span th:text="${contact.phone}"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Work</th>
+                        <td><span th:text="${contact.work}"></span></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="description">
+                    <th:block th:text="${contact.description}"></th:block>
+                </div>
+
+                <div class="btn-container mt-5">
+                    <button class="btn btn-danger btn-block">Delete</button>
+                    <button class="btn btn-primary btn-block">Update</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -126,6 +127,19 @@ public class UserController {
         model.addAttribute("totalPage", contactList.getTotalPages());
 
         return "general/show_contacts";
+    }
+
+    //Show Particular contact details
+    @RequestMapping(value = "/contact/{contactid}", method = RequestMethod.GET)
+    public String showContactDetails(@PathVariable("contactid") Long cId, Model model) {
+
+        Optional<Contact> contactOptional = contactService.getContactDetailByUserid(cId);
+        if (contactOptional.isPresent()) {
+            Contact contact = contactOptional.get();
+            model.addAttribute("contact", contact);
+            System.out.println(contact.printObj());
+        }
+        return "general/contact_detail";
     }
 
 }
