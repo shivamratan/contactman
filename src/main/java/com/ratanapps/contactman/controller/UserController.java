@@ -133,7 +133,7 @@ public class UserController {
     @RequestMapping(value = "/contact/{contactid}", method = RequestMethod.GET)
     public String showContactDetails(@PathVariable("contactid") Long cId, Model model, Principal principal) {
 
-        Optional<Contact> contactOptional = contactService.getContactDetailByUserid(cId);
+        Optional<Contact> contactOptional = contactService.getContactDetailByContactid(cId);
         User user = userService.getUserByUserEmail(principal.getName());
         if (contactOptional.isPresent()) {
             Contact contact = contactOptional.get();
@@ -144,6 +144,37 @@ public class UserController {
             System.out.println(contact.printObj());
         }
         return "general/contact_detail";
+    }
+
+    // Delete Contact Handler
+    @RequestMapping(value = "/delete/{cId}")
+    public String deleteContact(@PathVariable("cId") Long cId, Principal principal, HttpSession session) {
+
+        try {
+            Optional<Contact> contactOptional = contactService.getContactDetailByContactid(cId);
+            User user = userService.getUserByUserEmail(principal.getName());
+            if (contactOptional.isPresent()) {
+
+                Contact contact = contactOptional.get();
+
+                // Remove user relationship to user
+                user.getContacts().remove(contact);
+                userService.saveUser(user);
+
+                // Remove contact relationship to user
+                contact.setUser(null);
+                contactService.updateContactByRef(contact);
+
+                // Now this contact is not related to anyone, we can delete it safely !
+                contactService.deleteContactByRef(contact);
+                session.setAttribute("message",new Message("Contact deleted Successfully", "alert-success"));
+
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return "redirect:/user/show-contacts/0";
     }
 
 }

@@ -28,8 +28,20 @@ public class ContactService {
         return contactRepository.getContactByUserId(userId, pageable);
     }
 
-    public Optional<Contact> getContactDetailByUserid(Long contactId) {
+    public Optional<Contact> getContactDetailByContactid(Long contactId) {
         return contactRepository.getContactDetailByUserId(contactId);
+    }
+
+    public void deleteContactById(Integer contactId) {
+        contactRepository.deleteById(contactId);
+    }
+
+    public void deleteContactByRef(Contact contact) {
+        contactRepository.delete(contact);
+    }
+
+    public void updateContactByRef(Contact contact) {
+        contactRepository.save(contact);
     }
 
 }
