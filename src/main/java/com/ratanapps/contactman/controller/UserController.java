@@ -232,4 +232,12 @@ public class UserController {
         return "redirect:/user/contact/"+contact.getCId();
     }
 
+
+    // Profile Handler
+    @GetMapping("/profile")
+    public String getProfile(Model model) {
+
+        return "general/profile";
+    }
+
 }
