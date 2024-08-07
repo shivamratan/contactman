@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ratanapps.contactman.util.ContactManConst;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -175,6 +176,60 @@ public class UserController {
         }
 
         return "redirect:/user/show-contacts/0";
+    }
+
+    // open update form handler
+
+    @RequestMapping(value = "/update-contact/{cId}", method = RequestMethod.POST)
+    public String updateForm(@PathVariable("cId") Long cId, Model model) {
+        model.addAttribute("title", "Update Contact - Contact Man");
+        Optional<Contact> optionalContact = contactService.getContactDetailByContactid(cId);
+
+        if (optionalContact.isPresent()) {
+            Contact contact = optionalContact.get();
+            model.addAttribute("contact", contact);
+        }
+
+        return "general/update_contact";
+    }
+
+    @RequestMapping(value = "/process-update", method = RequestMethod.POST)
+    public String processUpdate(
+            @ModelAttribute Contact contact,
+            @RequestParam("profileImage") MultipartFile file,
+            Principal principal,
+            Model model,
+            HttpSession session) {
+
+        try {
+
+            User user = userService.getUserByUserEmail(principal.getName());
+            Contact oldContact = contactService.getContactDetailByContactid(contact.getCId()).get();
+
+            if (user != null)
+                contact.setUser(user);
+
+            if (!file.isEmpty()) {
+                // delete old photo
+                File delFile = new ClassPathResource("static/img/").getFile();
+                File file1 = new File(delFile, oldContact.getImage());
+                file1.delete();
+
+                //update new photo
+                File saveFile = new ClassPathResource("static/img").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                contact.setImage(file.getOriginalFilename());
+            }
+
+            contactService.updateContactByRef(contact);
+            session.setAttribute("message",new Message("Contact updated Successfully", "alert-success"));
+
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return "redirect:/user/contact/"+contact.getCId();
     }
 
 }
